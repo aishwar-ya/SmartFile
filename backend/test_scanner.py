@@ -8,4 +8,8 @@ files = scan_folder(folder)
 print("Files found:", len(files))
 
 for file in files:
-    print(file)
+    print("Name:", file["name"])
+    print("Path:", file["path"])
+    print("Size:", file["size"], "bytes")
+    print("Extension:", file["extension"])
+    print("-" * 40)
