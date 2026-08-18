@@ -1,8 +1,11 @@
 from pathlib import Path
+from save_scan import save_scan
 
 # Import FastAPI to create the backend
 # HTTPException is used to handle invalid requests
 from fastapi import FastAPI, HTTPException
+# Import CORS middleware
+from fastapi.middleware.cors import CORSMiddleware
 
 # Import our file scanner
 from scanner import scan_folder
@@ -15,6 +18,22 @@ from models import Scan
 
 # Create the FastAPI application
 app = FastAPI()
+
+# Allow the React frontend to communicate with FastAPI
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://localhost:5176",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174",
+    "http://127.0.0.1:5176",
+     ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Convert bytes into a readable storage format
 def format_size(size):
@@ -65,10 +84,11 @@ def scan(folder_path: str):
             detail="The provided path is not a folder"
         )
 
-    # Scan the folder and collect file information
     files = scan_folder(folder_path)
 
-    # Return the scanning results
+    # Save scan and file information to SQLite
+    scan = save_scan(folder_path)
+
     return {
         "folder": folder_path,
         "files_found": len(files),
