@@ -10,6 +10,8 @@ from scanner import scan_folder
 # Import duplicate detection functions
 from duplicate_finder import find_duplicates, calculate_wasted_storage
 
+from database import SessionLocal
+from models import Scan
 
 # Create the FastAPI application
 app = FastAPI()
@@ -118,3 +120,38 @@ def duplicates(folder_path: str):
     "wasted_storage_readable": format_size(wasted_storage),
     "duplicates": duplicate_groups
 }
+
+# --------------------------------------------------
+# Scan History API
+# --------------------------------------------------
+
+# Creates the scan history endpoint: GET /history
+@app.get("/history")
+def scan_history():
+
+    # Open a database session
+    db = SessionLocal()
+
+    try:
+        # Get all scans, newest first
+        scans = db.query(Scan).order_by(
+            Scan.created_at.desc()
+        ).all()
+
+        # Return scan history
+        return {
+            "total_scans": len(scans),
+            "history": [
+                {
+                    "id": scan.id,
+                    "folder": scan.folder_path,
+                    "files_count": scan.files_count,
+                    "created_at": scan.created_at
+                }
+                for scan in scans
+            ]
+        }
+
+    finally:
+        # Close the database session
+        db.close()
