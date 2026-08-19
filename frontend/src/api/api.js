@@ -32,3 +32,15 @@ export const getScanHistory = async () => {
   const response = await API.get("/history");
   return response.data;
 };
+
+// Delete a selected duplicate file
+export const cleanupFile = async (folderPath, filePath) => {
+  const response = await API.delete("/cleanup", {
+    params: {
+      folder_path: folderPath,
+      file_path: filePath,
+    },
+  });
+
+  return response.data;
+};
