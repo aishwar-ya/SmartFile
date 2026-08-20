@@ -43,8 +43,11 @@ export default function Dashboard() {
   // Stores scan history
   const [historyData, setHistoryData] = useState(null);
 
-  // Controls initial/scan loading screen
+  // Controls initial dashboard loading
   const [loading, setLoading] = useState(true);
+
+  // Controls only Scan Folder loading
+  const [scanLoading, setScanLoading] = useState(false);
 
   // Controls cleanup loading
   const [cleanupLoading, setCleanupLoading] = useState(false);
@@ -82,30 +85,17 @@ export default function Dashboard() {
         setLoading(true);
         setError("");
 
-        console.log("Testing /scan...");
-
-        const scan = await scanFolder(inputFolderPath);
-
-        console.log("Scan successful:", scan);
-
-        console.log("Testing /duplicates...");
+        const scan = await scanFolder(
+          inputFolderPath
+        );
 
         const duplicates =
-          await findDuplicates(inputFolderPath);
+          await findDuplicates(
+            inputFolderPath
+          );
 
-        console.log(
-          "Duplicates successful:",
-          duplicates
-        );
-
-        console.log("Testing /history...");
-
-        const history = await getScanHistory();
-
-        console.log(
-          "History successful:",
-          history
-        );
+        const history =
+          await getScanHistory();
 
         // Update dashboard
         setScanData(scan);
@@ -114,29 +104,19 @@ export default function Dashboard() {
 
         // Save successfully scanned path
         setFolderPath(inputFolderPath);
+
       } catch (err) {
         console.error(
           "Dashboard API error:",
           err
         );
 
-        if (err.response) {
-          console.error(
-            "Status:",
-            err.response.status
-          );
-
-          console.error(
-            "Response:",
-            err.response.data
-          );
-        }
-
         setError(
           err.response?.data?.detail ||
             err.message ||
             "Could not load dashboard data."
         );
+
       } finally {
         setLoading(false);
       }
@@ -152,11 +132,11 @@ export default function Dashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-xl font-semibold">
-            Scanning folder...
+            Loading SMARTFIE...
           </h2>
 
           <p className="mt-2 text-gray-500">
-            SMARTFIE is analyzing your files.
+            SMARTFIE is preparing your dashboard.
           </p>
         </div>
       </div>
@@ -169,6 +149,7 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
+
           <p className="text-red-600 font-semibold">
             {error}
           </p>
@@ -183,6 +164,7 @@ export default function Dashboard() {
           >
             Try Again
           </button>
+
         </div>
       </div>
     );
@@ -251,7 +233,9 @@ export default function Dashboard() {
       {/* ---------------- Top bar ---------------- */}
 
       <header className="sf-topbar">
+
         <div className="sf-brand">
+
           <span
             className="sf-brand-dot"
             aria-hidden="true"
@@ -260,6 +244,7 @@ export default function Dashboard() {
           <span className="sf-brand-name">
             SMARTFIE
           </span>
+
         </div>
 
         <button
@@ -267,13 +252,16 @@ export default function Dashboard() {
           type="button"
           onClick={() => {
             setError("");
+            setCleanupMessage("");
             setInputFolderPath(folderPath);
             setShowScanInput(true);
           }}
         >
           <ScanIcon className="sf-icon" />
+
           Scan Folder
         </button>
+
       </header>
 
       <div className="sf-body">
@@ -282,9 +270,12 @@ export default function Dashboard() {
 
         {showScanInput && (
           <div className="sf-scan-modal">
+
             <div className="sf-scan-box">
 
-              <h2>Scan Folder</h2>
+              <h2>
+                Scan Folder
+              </h2>
 
               <p>
                 Enter the folder path you want
@@ -308,6 +299,7 @@ export default function Dashboard() {
                   )
                 }
                 placeholder="Enter folder path"
+                disabled={scanLoading}
               />
 
               <div className="sf-scan-actions">
@@ -316,7 +308,7 @@ export default function Dashboard() {
 
                 <button
                   type="button"
-                  disabled={loading}
+                  disabled={scanLoading}
                   onClick={() => {
                     setError("");
                     setShowScanInput(false);
@@ -329,11 +321,17 @@ export default function Dashboard() {
 
                 <button
                   type="button"
-                  disabled={loading}
+                  disabled={
+                    scanLoading ||
+                    !inputFolderPath.trim()
+                  }
                   onClick={async () => {
                     try {
-                      setLoading(true);
+                      setScanLoading(true);
                       setError("");
+
+                      const newFolderPath =
+                        inputFolderPath.trim();
 
                       console.log(
                         "Starting scan..."
@@ -341,7 +339,7 @@ export default function Dashboard() {
 
                       const scan =
                         await scanFolder(
-                          inputFolderPath
+                          newFolderPath
                         );
 
                       console.log(
@@ -351,7 +349,7 @@ export default function Dashboard() {
 
                       const duplicates =
                         await findDuplicates(
-                          inputFolderPath
+                          newFolderPath
                         );
 
                       console.log(
@@ -378,14 +376,18 @@ export default function Dashboard() {
 
                       // Save successfully scanned path
                       setFolderPath(
-                        inputFolderPath
+                        newFolderPath
                       );
 
-                      // Clear previously selected files
+                      // Clear previous selections
                       setSelectedFiles([]);
 
-                      // Close popup only after success
+                      // Clear previous cleanup message
+                      setCleanupMessage("");
+
+                      // Close popup after success
                       setShowScanInput(false);
+
                     } catch (err) {
                       console.error(
                         "Scan error:",
@@ -399,18 +401,21 @@ export default function Dashboard() {
                         "Could not scan folder";
 
                       setError(message);
+
                     } finally {
-                      setLoading(false);
+                      setScanLoading(false);
                     }
                   }}
                 >
-                  {loading
+                  {scanLoading
                     ? "Scanning..."
                     : "Continue"}
                 </button>
 
               </div>
+
             </div>
+
           </div>
         )}
 
@@ -437,6 +442,7 @@ export default function Dashboard() {
               <span>
                 {item.label}
               </span>
+
             </button>
           ))}
         </nav>
@@ -445,16 +451,20 @@ export default function Dashboard() {
 
         <main className="sf-main">
 
-          {/* Page header */}
+          {/* ---------------- Page header ---------------- */}
 
-          <div className="sf-page-head">
-            <h1>
-              Storage Overview
-            </h1>
+          <div className="sf-dashboard-header">
 
-            <p>
-              Dashboard data from your latest scan
-            </p>
+            <div>
+              <h1>
+                Storage Overview
+              </h1>
+
+              <p>
+                Dashboard data from your latest scan
+              </p>
+            </div>
+
           </div>
 
           {/* ---------------- Stat cards ---------------- */}
@@ -467,6 +477,7 @@ export default function Dashboard() {
             {/* Files scanned */}
 
             <div className="sf-stat-card sf-tone-blue">
+
               <div className="sf-stat-icon">
                 <FilesIcon
                   className="sf-icon"
@@ -484,11 +495,13 @@ export default function Dashboard() {
               <div className="sf-stat-sub">
                 Total files found
               </div>
+
             </div>
 
             {/* Duplicate groups */}
 
             <div className="sf-stat-card sf-tone-purple">
+
               <div className="sf-stat-icon">
                 <CopyIcon
                   className="sf-icon"
@@ -506,11 +519,13 @@ export default function Dashboard() {
               <div className="sf-stat-sub">
                 Duplicate groups found
               </div>
+
             </div>
 
             {/* Wasted storage */}
 
             <div className="sf-stat-card sf-tone-green">
+
               <div className="sf-stat-icon">
                 <DiskIcon
                   className="sf-icon"
@@ -528,11 +543,13 @@ export default function Dashboard() {
               <div className="sf-stat-sub">
                 Space used by duplicates
               </div>
+
             </div>
 
-            {/* Recovered storage */}
+            {/* Storage recovered */}
 
             <div className="sf-stat-card sf-tone-green">
+
               <div className="sf-stat-icon">
                 <DiskIcon
                   className="sf-icon"
@@ -550,18 +567,20 @@ export default function Dashboard() {
               <div className="sf-stat-sub">
                 From latest cleanup
               </div>
-            </div>
 
+            </div>
 
           </section>
 
-          {/* ---------------- Storage composition ---------------- */}
+          {/* ---------------- Duplicate storage ---------------- */}
 
           <section
             className="sf-panel"
             aria-label="Storage composition"
           >
+
             <div className="sf-panel-head">
+
               <h2>
                 Duplicate Storage
               </h2>
@@ -569,9 +588,11 @@ export default function Dashboard() {
               <span className="sf-panel-total">
                 {wastedDisplay} wasted
               </span>
+
             </div>
 
             <div className="sf-bar-track">
+
               <div
                 className="sf-bar-segment sf-bar-duplicate"
                 style={{
@@ -580,25 +601,33 @@ export default function Dashboard() {
               />
 
               <div className="sf-bar-sweep" />
+
             </div>
 
             <div className="sf-bar-legend">
+
               <div className="sf-legend-item">
+
                 <span className="sf-legend-swatch sf-legend-duplicate" />
 
                 Duplicate storage —{" "}
                 {wastedDisplay}
+
               </div>
+
             </div>
+
           </section>
 
           {/* ---------------- Recent scans ---------------- */}
 
           <section
-            className="sf-panel"
+            className="sf-history-section"
             aria-label="Recent scan activity"
           >
-            <div className="sf-panel-head">
+
+            <div className="sf-section-header">
+
               <h2>
                 Recent Scans
               </h2>
@@ -606,70 +635,84 @@ export default function Dashboard() {
               <span className="sf-panel-total">
                 {recentScans.length} scans
               </span>
+
             </div>
 
-            <div className="sf-table">
+            <div className="sf-history-card">
 
-              {/* Table header */}
+              <div className="sf-table">
 
-              <div className="sf-table-row sf-table-row--head">
-                <span>Folder</span>
-                <span>Scanned</span>
-                <span>Files</span>
-                <span>Scan ID</span>
-                <span>Status</span>
-              </div>
+                {/* Table header */}
 
-              {/* History records */}
-
-              {recentScans.length === 0 ? (
-                <div className="sf-table-row">
-                  <span>
-                    No scan history available.
-                  </span>
+                <div className="sf-table-row sf-table-row--head">
+                  <span>Folder</span>
+                  <span>Scanned</span>
+                  <span>Files</span>
+                  <span>Scan ID</span>
+                  <span>Status</span>
                 </div>
-              ) : (
-                recentScans.map((scan) => (
-                  <div
-                    className="sf-table-row"
-                    key={scan.id}
-                  >
-                    <span className="sf-cell-folder">
-                      <FolderIcon
-                        className="sf-icon sf-icon--folder"
-                      />
 
-                      {scan.folder
-                        ?.split("\\")
-                        .pop()}
-                    </span>
+                {/* History records */}
 
-                    <span className="sf-cell-mono sf-cell-dim">
-                      {scan.created_at
-                        ? new Date(
-                            scan.created_at
-                          ).toLocaleString()
-                        : "-"}
-                    </span>
-
-                    <span className="sf-cell-mono">
-                      {scan.files_count ?? 0}
-                    </span>
-
-                    <span className="sf-cell-mono">
-                      #{scan.id}
-                    </span>
-
+                {recentScans.length === 0 ? (
+                  <div className="sf-table-row">
                     <span>
-                      <span className="sf-badge sf-badge--complete">
-                        Completed
-                      </span>
+                      No scan history available.
                     </span>
                   </div>
-                ))
-              )}
+                ) : (
+                  recentScans.map((scan) => (
+                    <div
+                      className="sf-table-row"
+                      key={scan.id}
+                    >
+
+                      <span className="sf-cell-folder">
+
+                        <FolderIcon
+                          className="sf-icon sf-icon--folder"
+                        />
+
+                        {scan.folder ||
+                          scan.folder_path ||
+                          "Unknown folder"}
+
+                      </span>
+
+                      <span className="sf-cell-mono sf-cell-dim">
+
+                        {scan.created_at
+                          ? new Date(
+                              scan.created_at
+                            ).toLocaleString()
+                          : "-"}
+
+                      </span>
+
+                      <span className="sf-cell-mono">
+                        {scan.files_count ??
+                          scan.files_found ??
+                          0}
+                      </span>
+
+                      <span className="sf-cell-mono">
+                        #{scan.id}
+                      </span>
+
+                      <span>
+                        <span className="sf-badge sf-badge--complete">
+                          Completed
+                        </span>
+                      </span>
+
+                    </div>
+                  ))
+                )}
+
+              </div>
 
             </div>
+
           </section>
 
           {/* ---------------- Duplicate files ---------------- */}
@@ -678,7 +721,9 @@ export default function Dashboard() {
             className="sf-panel"
             aria-label="Duplicate files"
           >
+
             <div className="sf-panel-head">
+
               <h2>
                 Duplicate Files
               </h2>
@@ -686,6 +731,7 @@ export default function Dashboard() {
               <span className="sf-panel-total">
                 {duplicateGroups} groups
               </span>
+
             </div>
 
             {/* Duplicate groups */}
@@ -712,7 +758,9 @@ export default function Dashboard() {
                       {/* Duplicate group header */}
 
                       <div className="sf-duplicate-group-head">
+
                         <div>
+
                           <h3>
                             Duplicate Group{" "}
                             {groupIndex + 1}
@@ -723,13 +771,17 @@ export default function Dashboard() {
                               0}{" "}
                             identical files
                           </p>
+
                         </div>
 
                         <span className="sf-duplicate-size">
+
                           {group.files?.[0]
                             ?.size ?? 0}{" "}
                           bytes each
+
                         </span>
+
                       </div>
 
                       {/* Files inside group */}
@@ -738,6 +790,7 @@ export default function Dashboard() {
 
                         {group.files?.map(
                           (file) => {
+
                             const isSelected =
                               selectedFiles.includes(
                                 file.path
@@ -763,18 +816,22 @@ export default function Dashboard() {
                                     onChange={(
                                       event
                                     ) => {
+
                                       if (
                                         event
                                           .target
                                           .checked
                                       ) {
+
                                         setSelectedFiles(
                                           (previous) => [
                                             ...previous,
                                             file.path,
                                           ]
                                         );
+
                                       } else {
+
                                         setSelectedFiles(
                                           (previous) =>
                                             previous.filter(
@@ -783,7 +840,9 @@ export default function Dashboard() {
                                                 file.path
                                             )
                                         );
+
                                       }
+
                                     }}
                                   />
 
@@ -794,6 +853,7 @@ export default function Dashboard() {
                                     />
 
                                     <div>
+
                                       <div className="sf-duplicate-file-name">
                                         {file.name}
                                       </div>
@@ -801,22 +861,28 @@ export default function Dashboard() {
                                       <div className="sf-duplicate-file-path">
                                         {file.path}
                                       </div>
+
                                     </div>
 
                                   </div>
+
                                 </div>
 
                                 <div className="sf-duplicate-file-size">
+
                                   {file.size}{" "}
                                   bytes
+
                                 </div>
 
                               </div>
                             );
+
                           }
                         )}
 
                       </div>
+
                     </div>
                   )
                 )}
@@ -824,24 +890,35 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* ---------------- Cleanup actions ---------------- */}
+            {/* ---------------- Cleanup success ---------------- */}
 
             {cleanupMessage && (
               <div className="sf-cleanup-success">
-                <strong>✓ Cleanup Complete</strong>
-                <span>{cleanupMessage}</span>
+
+                <strong>
+                  ✓ Cleanup Complete
+                </strong>
+
+                <span>
+                  {cleanupMessage}
+                </span>
+
               </div>
             )}
+
+            {/* ---------------- Cleanup actions ---------------- */}
 
             {selectedFiles.length > 0 && (
               <div className="sf-cleanup-actions">
 
                 <span>
+
                   {selectedFiles.length} file
                   {selectedFiles.length !== 1
                     ? "s"
                     : ""}{" "}
                   selected
+
                 </span>
 
                 <button
@@ -849,27 +926,45 @@ export default function Dashboard() {
                   className="sf-cleanup-btn"
                   disabled={cleanupLoading}
                   onClick={async () => {
-                    // Safety check: never allow every copy in a group to be deleted
-                    for (const group of duplicateFiles) {
-                    const selectedInGroup = group.files.filter(
-                      (file) => selectedFiles.includes(file.path)
-                    );
 
-                    if (
-                      selectedInGroup.length >= group.files.length
+                    // Safety check:
+                    // Never allow every file in a group
+                    // to be deleted.
+
+                    for (
+                      const group of duplicateFiles
                     ) {
-                      setError(
-                        `Cannot delete all copies in Duplicate Group ${
-                          duplicateFiles.indexOf(group) + 1
-                        }. Please keep at least one copy.`
-                      );
 
-                      return;
+                      const selectedInGroup =
+                        group.files.filter(
+                          (file) =>
+                            selectedFiles.includes(
+                              file.path
+                            )
+                        );
+
+                      if (
+                        selectedInGroup.length >=
+                        group.files.length
+                      ) {
+
+                        setError(
+                          `Cannot delete all copies in Duplicate Group ${
+                            duplicateFiles.indexOf(
+                              group
+                            ) + 1
+                          }. Please keep at least one copy.`
+                        );
+
+                        return;
+                      }
                     }
-                  }
+
                     const confirmed =
                       window.confirm(
-                        `Are you sure you want to permanently delete ${selectedFiles.length} selected file${
+                        `Are you sure you want to permanently delete ${
+                          selectedFiles.length
+                        } selected file${
                           selectedFiles.length !== 1
                             ? "s"
                             : ""
@@ -881,77 +976,76 @@ export default function Dashboard() {
                     }
 
                     try {
+
                       setCleanupLoading(true);
                       setError("");
+                      setCleanupMessage("");
 
-                      console.log(
-                        "Starting cleanup:",
-                        selectedFiles
-                      );
-
-                      // Store total recovered storage
                       let totalRecovered = 0;
 
                       // Delete each selected file
-                      for (const filePath of selectedFiles) {
+
+                      for (
+                        const filePath of selectedFiles
+                      ) {
+
                         const result =
                           await cleanupFile(
                             folderPath,
                             filePath
                           );
 
-                        console.log(
-                          "Cleanup result:",
-                          result
-                        );
-
                         totalRecovered +=
                           result.recovered_storage ||
                           0;
+
                       }
 
-                      setRecoveredStorage(totalRecovered);
+                      // Update recovered storage
 
-                      // Save total recovered storage
-
-                      console.log(
-                        "Total storage recovered:",
+                      setRecoveredStorage(
                         totalRecovered
                       );
 
-                      // Show completion message
+                      // Show success message
+
                       setCleanupMessage(
-                      `Cleanup complete! ${
-                        selectedFiles.length
-                      } file${
-                        selectedFiles.length !== 1
-                          ? "s"
-                          : ""
-                      } deleted. Storage recovered: ${
-                        totalRecovered
-                      } bytes.`
-                    );
+                        `Cleanup complete! ${
+                          selectedFiles.length
+                        } file${
+                          selectedFiles.length !== 1
+                            ? "s"
+                            : ""
+                        } deleted. Storage recovered: ${
+                          totalRecovered
+                        } bytes.`
+                      );
 
                       // Clear selections
+
                       setSelectedFiles([]);
 
                       // Refresh scan data
+
                       const scan =
                         await scanFolder(
                           folderPath
                         );
 
                       // Refresh duplicate data
+
                       const duplicates =
                         await findDuplicates(
                           folderPath
                         );
 
                       // Refresh history
+
                       const history =
                         await getScanHistory();
 
                       // Update dashboard
+
                       setScanData(scan);
 
                       setDuplicateData(
@@ -963,6 +1057,7 @@ export default function Dashboard() {
                       );
 
                     } catch (err) {
+
                       console.error(
                         "Cleanup error:",
                         err
@@ -974,9 +1069,13 @@ export default function Dashboard() {
                           err.message ||
                           "Could not clean selected files."
                       );
+
                     } finally {
+
                       setCleanupLoading(false);
+
                     }
+
                   }}
                 >
                   {cleanupLoading
@@ -989,7 +1088,7 @@ export default function Dashboard() {
 
             {/* Cleanup error */}
 
-            {error && (
+            {error && !showScanInput && (
               <p className="sf-scan-error">
                 {error}
               </p>
@@ -998,7 +1097,9 @@ export default function Dashboard() {
           </section>
 
         </main>
+
       </div>
+
     </div>
   );
 }
@@ -1022,6 +1123,7 @@ function iconProps(props) {
 function GridIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <rect
         x="3"
         y="3"
@@ -1053,6 +1155,7 @@ function GridIcon(props) {
         height="7"
         rx="1.5"
       />
+
     </svg>
   );
 }
@@ -1062,6 +1165,7 @@ function GridIcon(props) {
 function ScanIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <path d="M4 8V5a1 1 0 0 1 1-1h3" />
 
       <path d="M20 8V5a1 1 0 0 0-1-1h-3" />
@@ -1076,6 +1180,7 @@ function ScanIcon(props) {
         x2="20"
         y2="12"
       />
+
     </svg>
   );
 }
@@ -1085,6 +1190,7 @@ function ScanIcon(props) {
 function HistoryIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <circle
         cx="12"
         cy="12"
@@ -1092,6 +1198,7 @@ function HistoryIcon(props) {
       />
 
       <path d="M12 8v4l3 2" />
+
     </svg>
   );
 }
@@ -1101,9 +1208,11 @@ function HistoryIcon(props) {
 function FilesIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
 
       <path d="M14 3v5h5" />
+
     </svg>
   );
 }
@@ -1113,6 +1222,7 @@ function FilesIcon(props) {
 function CopyIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <rect
         x="9"
         y="9"
@@ -1122,6 +1232,7 @@ function CopyIcon(props) {
       />
 
       <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1" />
+
     </svg>
   );
 }
@@ -1131,6 +1242,7 @@ function CopyIcon(props) {
 function DiskIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <ellipse
         cx="12"
         cy="6"
@@ -1141,6 +1253,7 @@ function DiskIcon(props) {
       <path d="M4 6v6c0 1.66 3.58 3 8 3s8-1.34 8-3V6" />
 
       <path d="M4 12v6c0 1.66 3.58 3 8 3s8-1.34 8-3v-6" />
+
     </svg>
   );
 }
@@ -1150,7 +1263,9 @@ function DiskIcon(props) {
 function FolderIcon(props) {
   return (
     <svg {...iconProps(props)}>
+
       <path d="M3 7a1 1 0 0 1 1-1h5l2 2h9a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V7Z" />
+
     </svg>
   );
 }
