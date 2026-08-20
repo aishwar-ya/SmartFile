@@ -1251,6 +1251,29 @@ input:focus-visible {
     flex-wrap: wrap;
   }
 
+/* Recent scans view all button */
+
+.sf-history-actions {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 4px;
+}
+
+.sf-view-all-btn {
+  border: 1px solid var(--sf-border, #e5e7eb);
+  background: #ffffff;
+  color: #2563eb;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.sf-view-all-btn:hover {
+  background: #f8fafc;
+}
+
   .sf-panel-head h2 {
     font-size: 18px;
   }

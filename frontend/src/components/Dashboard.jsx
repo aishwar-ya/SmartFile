@@ -43,6 +43,9 @@ export default function Dashboard() {
   // Stores scan history
   const [historyData, setHistoryData] = useState(null);
 
+  // Controls whether all recent scan records are displayed
+const [showAllScans, setShowAllScans] = useState(false);
+
   // Controls initial dashboard loading
   const [loading, setLoading] = useState(true);
 
@@ -181,8 +184,12 @@ export default function Dashboard() {
   const wastedStorage =
     duplicateData?.wasted_storage || 0;
 
-  const recentScans =
+  const allScans =
     historyData?.history || [];
+
+  const recentScans = showAllScans
+    ? allScans
+    : allScans.slice(0, 5);
 
   const duplicateFiles =
     duplicateData?.duplicates || [];
@@ -641,6 +648,22 @@ export default function Dashboard() {
             <div className="sf-history-card">
 
               <div className="sf-table">
+            
+            {allScans.length > 5 && (
+              <div className="sf-history-actions">
+                <button
+                  type="button"
+                  className="sf-view-all-btn"
+                  onClick={() =>
+                    setShowAllScans(!showAllScans)
+                  }
+                >
+                  {showAllScans
+                    ? "Show Less"
+                    : `View All Scans (${allScans.length})`}
+                </button>
+              </div>
+            )}
 
                 {/* Table header */}
 
