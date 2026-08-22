@@ -2,8 +2,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 
-# SQLite database file
-DATABASE_URL = "sqlite:///./smartfile.db"
+# SQLite will automatically create a database file named smartfile.db inside your backend folder.
+DATABASE_URL = "sqlite:///./smartfile.db"                                  
 
 
 # Create the database engine
