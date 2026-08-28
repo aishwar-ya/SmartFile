@@ -57,6 +57,16 @@ export default function Dashboard() {
 
   const [selectedFiles, setSelectedFiles] = useState([]);
 
+  useEffect(() => {
+    if (!scanMessage) return;
+
+    const timer = setTimeout(() => {
+      setScanMessage("");
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [scanMessage]);
+
   /* ===================== Initial History Load ===================== */
 
   useEffect(() => {
