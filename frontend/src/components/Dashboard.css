@@ -2325,3 +2325,78 @@ input {
   line-height: 1.6;
 }
 
+.sf-scan-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #f4f7ff;
+  color: #3156d3;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.sf-loading-spinner {
+  width: 18px;
+  height: 18px;
+  border: 3px solid #dbe4ff;
+  border-top-color: #3156d3;
+  border-radius: 50%;
+  animation: sf-spin 0.8s linear infinite;
+}
+
+@keyframes sf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================
+   Scan Success Message
+========================================= */
+
+.sf-success-message {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  width: 100%;
+  max-width: 520px;
+
+  margin: 0 0 28px;
+
+  padding: 16px 20px;
+
+  background: #ecfdf3;
+  border: 1px solid #a7e3bd;
+  border-radius: 14px;
+
+  color: #176b3a;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  box-shadow: 0 8px 24px rgba(39, 131, 84, 0.08);
+}
+
+.sf-success-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 28px;
+  height: 28px;
+
+  flex-shrink: 0;
+
+  background: #278354;
+  color: #ffffff;
+
+  border-radius: 50%;
+
+  font-size: 17px;
+  font-weight: 700;
+}

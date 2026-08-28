@@ -39,6 +39,7 @@ export default function Dashboard() {
 
   const [activePage, setActivePage] = useState("dashboard");
   const [showAllScans, setShowAllScans] = useState(false);
+  const [scanMessage, setScanMessage] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [scanLoading, setScanLoading] = useState(false);
@@ -213,6 +214,9 @@ export default function Dashboard() {
       setSelectedFiles([]);
       setShowAllScans(false);
 
+      setScanMessage("Folder scanned successfully!");
+      setShowScanInput(false);
+
       setActivePage("dashboard");
       setShowScanInput(false);
     } catch (err) {
@@ -354,6 +358,7 @@ export default function Dashboard() {
           type="button"
           onClick={() => {
             setError("");
+            setScanMessage("");
             setInputFolderPath(folderPath);
             setShowScanInput(true);
           }}
@@ -411,6 +416,13 @@ export default function Dashboard() {
               {error && (
                 <div className="sf-page-error">
                   {error}
+                </div>
+              )}
+
+              {scanMessage && (
+                <div className="sf-success-message">
+                  <span className="sf-success-check">✓</span>
+                  <span>{scanMessage}</span>
                 </div>
               )}
 
@@ -847,6 +859,12 @@ export default function Dashboard() {
                   : "Continue"}
               </button>
             </div>
+            {scanLoading && (
+              <div className="sf-scan-loading">
+                <div className="sf-loading-spinner"></div>
+                <span>Scanning folder, please wait...</span>
+              </div>
+            )}
           </div>
         </div>
       )}
