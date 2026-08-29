@@ -147,13 +147,28 @@ export default function Dashboard() {
       return "-";
     }
 
-    const date = new Date(dateValue);
+    const hasTimezone =
+      /(?:Z|[+-]\d{2}:?\d{2})$/i.test(dateValue);
+
+    const normalizedDate = hasTimezone
+      ? dateValue
+      : `${dateValue}Z`;
+
+    const date = new Date(normalizedDate);
 
     if (Number.isNaN(date.getTime())) {
       return "-";
     }
 
-    return date.toLocaleString();
+    return date.toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
   };
 
   const wastedDisplay =
@@ -869,6 +884,7 @@ export default function Dashboard() {
                   : "Continue"}
               </button>
             </div>
+
             {scanLoading && (
               <div className="sf-scan-loading">
                 <div className="sf-loading-spinner"></div>
@@ -933,7 +949,7 @@ function HistoryIcon(props) {
 function FilesIcon(props) {
   return (
     <svg {...iconProps(props)}>
-      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+      <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 1 2-2V9z" />
       <path d="M14 3v6h6" />
       <path d="M8 13h8" />
       <path d="M8 17h5" />
