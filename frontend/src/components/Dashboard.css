@@ -1418,6 +1418,57 @@ input {
     box-shadow 0.2s ease;
 }
 
+.sf-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  min-width: 110px;
+  min-height: 44px;
+
+  padding: 0 20px;
+
+  border: 1px solid #cbd8ea;
+  border-radius: 12px;
+
+  background: #ffffff;
+  color: #315b9d;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.sf-refresh-btn:hover:not(:disabled) {
+  background: #eef4ff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(49, 91, 157, 0.1);
+}
+
+.sf-refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.sf-refresh-btn .sf-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.sf-icon--spinning {
+  animation: sf-spin 0.8s linear infinite;
+}
+
 .sf-view-all-btn:hover {
   background: #eef4ff;
 
@@ -2399,4 +2450,76 @@ input {
 
   font-size: 17px;
   font-weight: 700;
+}
+
+/* ===================== History Header Actions ===================== */
+
+.sf-history-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.sf-refresh-btn {
+  width: 46px;
+  min-width: 46px;
+  height: 46px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: 1px solid #cbd5e1;
+  border-radius: 14px;
+
+  background: #ffffff;
+  color: #35527a;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.sf-refresh-btn:hover:not(:disabled) {
+  background: #f8fafc;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(48, 74, 112, 0.1);
+}
+
+.sf-refresh-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.sf-refresh-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.sf-history-header-actions .sf-view-all-btn {
+  min-width: 150px;
+  height: 46px;
+  padding: 0 24px;
+}
+
+.sf-history-header-actions .sf-panel-total {
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .sf-history-header-actions {
+    justify-content: flex-start;
+    margin-top: 18px;
+  }
+
+  .sf-refresh-btn,
+  .sf-history-header-actions .sf-view-all-btn {
+    min-width: 130px;
+  }
 }

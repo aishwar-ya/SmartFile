@@ -44,6 +44,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [scanLoading, setScanLoading] = useState(false);
   const [cleanupLoading, setCleanupLoading] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
   const [error, setError] = useState("");
   const [cleanupMessage, setCleanupMessage] = useState("");
@@ -344,6 +345,27 @@ export default function Dashboard() {
       setCleanupLoading(false);
     }
   };
+
+  const handleRefreshHistory = async () => {
+  try {
+    setHistoryLoading(true);
+    setError("");
+
+    const history = await getScanHistory();
+
+    setHistoryData(history);
+  } catch (err) {
+    console.error("History refresh error:", err);
+
+    setError(
+      err.response?.data?.detail ||
+        err.message ||
+        "Could not refresh scan history."
+    );
+  } finally {
+    setHistoryLoading(false);
+  }
+};
 
   /* ===================== Loading ===================== */
 
@@ -725,6 +747,21 @@ export default function Dashboard() {
                   </div>
 
                   <div className="sf-history-header-actions">
+                    <button
+                      type="button"
+                      className="sf-refresh-btn"
+                      onClick={handleRefreshHistory}
+                      disabled={historyLoading}
+                      title={historyLoading ? "Refreshing..." : "Refresh"}
+                      aria-label={historyLoading ? "Refreshing scan history" : "Refresh scan history"}
+                    >
+                      <RefreshIcon
+                        className={`sf-icon${
+                          historyLoading ? " sf-icon--spinning" : ""
+                        }`}
+                      />
+                    </button>
+
                     <span className="sf-panel-total">
                       {allScans.length} scans
                     </span>
@@ -734,15 +771,10 @@ export default function Dashboard() {
                         type="button"
                         className="sf-view-all-btn"
                         onClick={() =>
-                          setShowAllScans(
-                            (previous) =>
-                              !previous
-                          )
+                          setShowAllScans((previous) => !previous)
                         }
                       >
-                        {showAllScans
-                          ? "Show Less"
-                          : "View All"}
+                        {showAllScans ? "Show Less" : "View All"}
                       </button>
                     )}
                   </div>
@@ -942,6 +974,17 @@ function HistoryIcon(props) {
       <path d="M3 12a9 9 0 1 0 3-6.7" />
       <path d="M3 4v5h5" />
       <path d="M12 7v5l3 2" />
+    </svg>
+  );
+}
+
+function RefreshIcon(props) {
+  return (
+    <svg {...iconProps(props)}>
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+      <path d="M3 21v-5h5" />
     </svg>
   );
 }
