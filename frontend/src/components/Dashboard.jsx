@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./Dashboard.css";
 import smartfieLogo from "../assets/smartfie-logo.png";
+import smartfieDarkLogo from "../assets/darklogo.png";
 
 import {
   scanFolder,
@@ -57,6 +58,17 @@ export default function Dashboard() {
   const [showScanInput, setShowScanInput] = useState(false);
 
   const [selectedFiles, setSelectedFiles] = useState([]);
+
+  const [darkMode, setDarkMode] = useState(() => {
+    return localStorage.getItem("smartfie-theme") === "dark";
+  });
+
+  useEffect(() => {
+  localStorage.setItem(
+    "smartfie-theme",
+    darkMode ? "dark" : "light"
+  );
+}, [darkMode]);
 
   useEffect(() => {
     if (!scanMessage) return;
@@ -388,31 +400,55 @@ export default function Dashboard() {
   /* ===================== UI ===================== */
 
   return (
-    <div className="sf-shell">
+    <div
+      className={`sf-shell ${
+        darkMode ? "sf-dark-mode" : ""
+      }`}
+    >
 
       {/* Top Bar */}
       <header className="sf-topbar">
         <div className="sf-brand">
           <img
-            src={smartfieLogo}
+            src={darkMode ? smartfieDarkLogo : smartfieLogo}
             alt="SMARTFIE"
             className="sf-brand-logo"
           />
         </div>
 
-        <button
-          className="sf-scan-btn"
-          type="button"
-          onClick={() => {
-            setError("");
-            setScanMessage("");
-            setInputFolderPath(folderPath);
-            setShowScanInput(true);
-          }}
-        >
-          <ScanIcon className="sf-icon" />
-          <span>Scan Folder</span>
-        </button>
+        <div className="sf-topbar-actions">
+          <button
+            type="button"
+            className="sf-theme-toggle"
+            onClick={() => setDarkMode((previous) => !previous)}
+            title={
+              darkMode
+                ? "Switch to Light Mode"
+                : "Switch to Dark Mode"
+            }
+            aria-label={
+              darkMode
+                ? "Switch to Light Mode"
+                : "Switch to Dark Mode"
+            }
+          >
+            {darkMode ? "☀️" : "🌙"}
+          </button>
+
+          <button
+            className="sf-scan-btn"
+            type="button"
+            onClick={() => {
+              setError("");
+              setScanMessage("");
+              setInputFolderPath(folderPath);
+              setShowScanInput(true);
+            }}
+          >
+            <ScanIcon className="sf-icon" />
+            <span>Scan Folder</span>
+          </button>
+        </div>
       </header>
 
       <div className="sf-body">
