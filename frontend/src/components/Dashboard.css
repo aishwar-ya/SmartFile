@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
 /* =========================================================
    Root
 ========================================================= */
@@ -32,12 +34,10 @@ input {
 
 .sf-shell {
   min-height: 100vh;
-
   background: var(--sf-page-bg);
   color: var(--sf-text);
-
   font-family:
-    Inter,
+    "Manrope",
     system-ui,
     -apple-system,
     BlinkMacSystemFont,
@@ -2880,4 +2880,202 @@ input {
 
 .sf-dark-mode .sf-brand-logo {
   filter: brightness(1.25) contrast(1.08) saturate(1.15);
+}
+
+/* =========================================================
+   DARK MODE - SCAN HISTORY CONTRAST FIX
+   ========================================================= */
+
+.sf-dark-mode .sf-history-folder span {
+  color: #cbd5e1;
+}
+
+.sf-dark-mode .sf-history-folder-icon {
+  color: #60a5fa;
+}
+
+.sf-dark-mode .sf-history-files {
+  color: #f1f5f9;
+}
+
+.sf-dark-mode .sf-history-id {
+  color: #cbd5e1;
+}
+
+.sf-dark-mode .sf-history-table th {
+  color: #cbd5e1;
+  background: #273449;
+}
+
+.sf-dark-mode .sf-history-table td {
+  color: #d1d5db;
+  background: #1f2937;
+}
+
+.sf-dark-mode .sf-history-table tbody tr:hover {
+  background: #273449;
+}
+
+.sf-dark-mode .sf-history-table tbody tr:hover td {
+  background: #273449;
+}
+
+.sf-dark-mode .sf-history-card {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.sf-dark-mode .sf-history-actions {
+  background: #1f2937;
+  border-color: #374151;
+}
+
+.sf-dark-mode .sf-view-all-btn {
+  background: #273449;
+  border-color: #46556b;
+  color: #93c5fd;
+}
+
+.sf-dark-mode .sf-view-all-btn:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+
+.sf-dark-mode .sf-panel-total {
+  background: #273449;
+  color: #e2e8f0;
+}
+
+/* Better date & time readability */
+.sf-dark-mode .sf-history-table td:nth-child(2) {
+  color: #cbd5e1;
+}
+
+/* Better file count readability */
+.sf-dark-mode .sf-history-table td:nth-child(3) {
+  color: #f1f5f9;
+}
+
+/* Better scan ID readability */
+.sf-dark-mode .sf-history-table td:nth-child(4) {
+  color: #cbd5e1;
+}
+
+/* =========================================================
+   DARK MODE - SCAN FOLDER MODAL FIX
+   ========================================================= */
+
+/* Keep the Scan Folder modal white */
+.sf-dark-mode .sf-scan-box {
+  background: #ffffff;
+  border-color: #e5eaf0;
+  color: #243247;
+}
+
+/* Modal heading */
+.sf-dark-mode .sf-scan-box h2 {
+  color: #243247;
+}
+
+/* Modal description */
+.sf-dark-mode .sf-scan-box > p {
+  color: #64748b;
+}
+
+/* Folder path input */
+.sf-dark-mode .sf-scan-box input {
+  background: #1f2937;
+  color: #f3f4f6;
+  border-color: #46556b;
+}
+
+/* Input placeholder */
+.sf-dark-mode .sf-scan-box input::placeholder {
+  color: #94a3b8;
+}
+
+/* Input focus */
+.sf-dark-mode .sf-scan-box input:focus {
+  border-color: #3b82f6;
+  box-shadow:
+    0 0 0 3px
+    rgba(59, 130, 246, 0.12);
+}
+
+/* Cancel button */
+.sf-dark-mode .sf-scan-actions button:first-child {
+  background: #ffffff;
+  border-color: #475569;
+  color: #475569;
+}
+
+/* Cancel hover */
+.sf-dark-mode .sf-scan-actions button:first-child:hover:not(:disabled) {
+  background: #f8fafc;
+  border-color: #334155;
+}
+
+/* Continue button */
+.sf-dark-mode .sf-scan-actions button:last-child {
+  background: #315b9d;
+  border-color: #315b9d;
+  color: #ffffff;
+}
+
+/* Continue hover */
+.sf-dark-mode .sf-scan-actions button:last-child:hover:not(:disabled) {
+  background: #3b6db5;
+  border-color: #3b6db5;
+}
+
+/* Error message */
+.sf-dark-mode .sf-scan-error {
+  background: #fff5f5;
+  border-color: #fecaca;
+  color: #b42318;
+}
+
+/* =========================================================
+   STAT CARD - UI POLISH
+   ========================================================= */
+
+.sf-stat-card {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.sf-stat-card:hover {
+  transform: translateY(-5px);
+  border-color: #d6e0ec;
+
+  box-shadow:
+    0 18px 38px rgba(15, 23, 42, 0.09);
+}
+
+.sf-stat-icon {
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.sf-stat-card:hover .sf-stat-icon {
+  transform: translateY(-2px) scale(1.03);
+
+  box-shadow:
+    0 8px 18px rgba(15, 23, 42, 0.06);
+}
+
+.sf-stat-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.sf-stat-label {
+  letter-spacing: -0.2px;
+}
+
+.sf-stat-sub,
+.sf-stat-note {
+  letter-spacing: 0;
 }
