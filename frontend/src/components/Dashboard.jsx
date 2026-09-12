@@ -802,7 +802,10 @@ export default function Dashboard() {
                                           "Unknown file"}
                                       </div>
 
-                                      <div className="sf-duplicate-file-path">
+                                      <div
+                                        className="sf-duplicate-file-path"
+                                        title={file.path}
+                                      >
                                         {file.path}
                                       </div>
                                     </div>
