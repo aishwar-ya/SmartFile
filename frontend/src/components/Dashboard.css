@@ -1208,6 +1208,28 @@ input {
   height: 18px;
 }
 
+.sf-undo-btn {
+  margin-left: 16px;
+  padding: 8px 18px;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.sf-undo-btn:hover {
+  transform: translateY(-1px);
+}
+
+.sf-undo-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
 
 /* =========================================================
    SCAN HISTORY - CLEAN TABLE

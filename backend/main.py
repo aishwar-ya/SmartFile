@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import shutil
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -306,6 +306,50 @@ def cleanup_file(
     # Store file size before deletion
     file_size = selected_file.stat().st_size
 
+    # Create backup folder for Undo
+    backup_folder = Path("cleanup_backup")
+    backup_folder.mkdir(exist_ok=True)
+
+    # Store information about the original file location
+    backup_info_file = backup_folder / "backup_info.json"
+
+    backup_info = []
+
+    # Load existing backup information
+    if backup_info_file.exists():
+        try:
+            import json
+
+            with open(backup_info_file, "r", encoding="utf-8") as file:
+                backup_info = json.load(file)
+        except (json.JSONDecodeError, OSError):
+            backup_info = []
+
+    # Create a unique backup filename
+    backup_file = backup_folder / selected_file.name
+
+    counter = 1
+    while backup_file.exists():
+        backup_file = backup_folder / (
+            f"{selected_file.stem}_{counter}{selected_file.suffix}"
+        )
+        counter += 1
+
+    # Copy the file to the backup folder
+    shutil.copy2(selected_file, backup_file)
+
+    # Save original location information
+    backup_info.append({
+        "backup_file": str(backup_file.resolve()),
+        "original_file": str(selected_file.resolve()),
+    })
+
+    # Save backup information
+    import json
+
+    with open(backup_info_file, "w", encoding="utf-8") as file:
+        json.dump(backup_info, file, indent=4)
+
     # Delete ONLY the selected file
     selected_file.unlink()
 
@@ -316,4 +360,70 @@ def cleanup_file(
         "recovered_storage_readable": format_size(
             file_size
         ),
+        "backup_file": str(backup_file),
     }
+
+@app.post("/undo-cleanup")
+def undo_cleanup():
+    import json
+
+    backup_folder = Path("cleanup_backup")
+    backup_info_file = backup_folder / "backup_info.json"
+
+    # Check whether backup information exists
+    if not backup_info_file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="No deleted files available to restore",
+        )
+
+    try:
+        with open(backup_info_file, "r", encoding="utf-8") as file:
+            backup_info = json.load(file)
+    except (json.JSONDecodeError, OSError):
+        raise HTTPException(
+            status_code=500,
+            detail="Could not read backup information",
+        )
+
+    if not backup_info:
+        raise HTTPException(
+            status_code=404,
+            detail="No deleted files available to restore",
+        )
+
+    restored_files = []
+
+    for item in backup_info:
+        backup_file = Path(item["backup_file"])
+        original_file = Path(item["original_file"])
+
+        # Restore only if the backup still exists
+        if backup_file.exists():
+
+            # Create the original folder if necessary
+            original_file.parent.mkdir(
+                parents=True,
+                exist_ok=True,
+            )
+
+            # Restore the file
+            shutil.move(
+                str(backup_file),
+                str(original_file),
+            )
+
+            restored_files.append(
+                str(original_file)
+            )
+
+    # Clear backup information after restoration
+    with open(backup_info_file, "w", encoding="utf-8") as file:
+        json.dump([], file, indent=4)
+
+    return {
+        "message": "Deleted files restored successfully",
+        "restored_files": restored_files,
+        "restored_count": len(restored_files),
+    }
+    

@@ -8,6 +8,7 @@ import {
   findDuplicates,
   getScanHistory,
   cleanupFile,
+  undoCleanup,
 } from "../api/api";
 
 /* =========================================================
@@ -45,11 +46,12 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [scanLoading, setScanLoading] = useState(false);
   const [cleanupLoading, setCleanupLoading] = useState(false);
+  const [undoLoading, setUndoLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
 
   const [error, setError] = useState("");
   const [cleanupMessage, setCleanupMessage] = useState("");
-
+  const [canUndo, setCanUndo] = useState(false);
   const [recoveredStorage, setRecoveredStorage] = useState(0);
 
   const [folderPath, setFolderPath] = useState("");
@@ -306,7 +308,7 @@ export default function Dashboard() {
     }
 
     const confirmed = window.confirm(
-      `Are you sure you want to permanently delete ${
+      `Are you sure you want to delete ${
         selectedFiles.length
       } selected file${
         selectedFiles.length !== 1 ? "s" : ""
@@ -349,6 +351,8 @@ export default function Dashboard() {
         )}.`
       );
 
+      setCanUndo(true);
+
       setSelectedFiles([]);
 
       const scan =
@@ -373,6 +377,49 @@ export default function Dashboard() {
       );
     } finally {
       setCleanupLoading(false);
+    }
+  };
+
+    const handleUndoCleanup = async () => {
+    try {
+      setUndoLoading(true);
+      setError("");
+
+      const result = await undoCleanup();
+
+      const restoredCount =
+        result?.restored_count || 0;
+
+      setCleanupMessage(
+        `${restoredCount} file${
+          restoredCount !== 1 ? "s" : ""
+        } restored successfully.`
+      );
+
+      setCanUndo(false);
+
+      setSelectedFiles([]);
+
+      if (folderPath) {
+        const scan =
+          await scanFolder(folderPath);
+
+        const duplicates =
+          await findDuplicates(folderPath);
+
+        setScanData(scan);
+        setDuplicateData(duplicates);
+      }
+    } catch (err) {
+      console.error("Undo cleanup error:", err);
+
+      setError(
+        err.response?.data?.detail ||
+          err.message ||
+          "Could not restore deleted files."
+      );
+    } finally {
+      setUndoLoading(false);
     }
   };
 
@@ -778,7 +825,18 @@ export default function Dashboard() {
 
                 {cleanupMessage && (
                   <div className="sf-cleanup-success">
-                    {cleanupMessage}
+                    <span>{cleanupMessage}</span>
+
+                    {canUndo && (
+                      <button
+                        type="button"
+                        className="sf-undo-btn"
+                        onClick={handleUndoCleanup}
+                        disabled={undoLoading}
+                      >
+                        {undoLoading ? "Restoring..." : "Undo"}
+                      </button>
+                    )}
                   </div>
                 )}
 

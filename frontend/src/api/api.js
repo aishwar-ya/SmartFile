@@ -44,3 +44,9 @@ export const cleanupFile = async (folderPath, filePath) => {
 
   return response.data;
 };
+
+// Undo the most recent cleanup
+export const undoCleanup = async () => {
+  const response = await API.post("/undo-cleanup");
+  return response.data;
+};
