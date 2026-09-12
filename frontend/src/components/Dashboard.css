@@ -452,17 +452,13 @@ input {
 
 .sf-stat-card {
   position: relative;
-
   min-height: 190px;
-
   padding: 24px;
-
   overflow: hidden;
 
   background: var(--sf-card-bg);
 
-  border:
-    1px solid var(--sf-border);
+   border: 1px solid rgba(100, 116, 139, 0.28);
 
   border-radius: 24px;
 
@@ -3078,4 +3074,73 @@ input {
 .sf-stat-sub,
 .sf-stat-note {
   letter-spacing: 0;
+}
+
+/* =========================================================
+   File Type Groups
+========================================================= */
+
+.sf-file-types-section {
+  margin-top: 24px;
+}
+
+.sf-file-types-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+.sf-file-type-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px;
+  background: var(--sf-card-bg);
+  border: 1px solid rgba(100, 116, 139, 0.25);
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.sf-file-type-icon {
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  background: var(--sf-page-bg);
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.sf-file-type-count {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sf-text);
+}
+
+.sf-file-type-name {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--sf-muted);
+}
+
+/* Responsive */
+
+@media (max-width: 1100px) {
+  .sf-file-types-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .sf-file-types-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 480px) {
+  .sf-file-types-grid {
+    grid-template-columns: 1fr;
+  }
 }

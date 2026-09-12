@@ -34,6 +34,8 @@ app.add_middleware(
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
         "http://127.0.0.1:5176",
+        "http://localhost:5177",
+        "http://127.0.0.1:5177",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -94,6 +96,23 @@ def scan(folder_path: str):
 
     # Scan the folder
     files = scan_folder(folder_path)
+
+    # Count files by type
+    file_type_counts = {
+        "Images": 0,
+        "Documents": 0,
+        "Videos": 0,
+        "Audio": 0,
+        "Other": 0,
+    }
+
+    for file in files:
+        file_type = file.get("file_type", "Other")
+
+        if file_type in file_type_counts:
+            file_type_counts[file_type] += 1
+        else:
+            file_type_counts["Other"] += 1
 
     # Save scan information to SQLite
     save_scan(folder_path)

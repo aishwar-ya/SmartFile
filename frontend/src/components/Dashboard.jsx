@@ -120,7 +120,25 @@ export default function Dashboard() {
     duplicateData?.duplicates || [];
 
   const allScans =
-    historyData?.history || [];
+      historyData?.history || [];
+
+    const fileTypeCounts = {
+    Images: 0,
+    Documents: 0,
+    Videos: 0,
+    Audio: 0,
+    Other: 0,
+  };
+
+  (scanData?.files || []).forEach((file) => {
+    const type = file.file_type || "Other";
+
+    if (fileTypeCounts[type] !== undefined) {
+      fileTypeCounts[type] += 1;
+    } else {
+      fileTypeCounts.Other += 1;
+    }
+  });
 
   const recentScans = showAllScans
     ? allScans
@@ -583,6 +601,47 @@ export default function Dashboard() {
                   <div className="sf-stat-sub">
                     From cleaned duplicates
                   </div>
+                </div>
+              </section>
+
+              <section className="sf-file-types-section">
+                <div className="sf-section-header">
+                  <div>
+                    <h2>File Types</h2>
+                    <p>Files grouped by their formats.</p>
+                  </div>
+
+                  <span className="sf-panel-total">
+                    {totalFiles} files
+                  </span>
+                </div>
+
+                <div className="sf-file-types-grid">
+                  {Object.entries(fileTypeCounts).map(
+                    ([type, count]) => (
+                    <div
+                      className="sf-file-type-card"
+                      key={type}
+                    >
+                      <div className="sf-file-type-icon">
+                        {type === "Images" && "📷"}
+                        {type === "Documents" && "📄"}
+                        {type === "Videos" && "🎬"}
+                        {type === "Audio" && "🎵"}
+                        {type === "Other" && "📦"}
+                      </div>
+
+                      <div>
+                        <div className="sf-file-type-count">
+                          {count}
+                        </div>
+
+                        <div className="sf-file-type-name">
+                          {type}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </section>
 
