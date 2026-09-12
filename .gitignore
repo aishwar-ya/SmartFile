@@ -18,3 +18,5 @@ backend/smartfile.db
 # OS files
 .DS_Store
 Thumbs.db
+
+backend/cleanup_backup/
