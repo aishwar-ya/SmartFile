@@ -114,13 +114,27 @@ def scan(folder_path: str):
         else:
             file_type_counts["Other"] += 1
 
-    # Save scan information to SQLite
-    save_scan(folder_path)
+    # Find duplicate groups from the same scan
+    duplicate_groups = find_duplicates(files)
+
+    # Calculate wasted storage
+    wasted_storage = calculate_wasted_storage(
+        duplicate_groups
+    )
+
+    # Save the SAME scan results to SQLite
+    save_scan(folder_path, files)
 
     return {
         "folder": folder_path,
         "files_found": len(files),
         "files": files,
+        "duplicate_groups": len(duplicate_groups),
+        "wasted_storage": wasted_storage,
+        "wasted_storage_readable": format_size(
+            wasted_storage
+        ),
+        "duplicates": duplicate_groups,
     }
 
 

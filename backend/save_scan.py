@@ -1,17 +1,11 @@
 from database import SessionLocal
 from models import Scan, File
-from scanner import scan_folder
 
 
-def save_scan(folder_path):
-    # Scan the selected folder
-    files = scan_folder(folder_path)
-
-    # Open database session
+def save_scan(folder_path, files):
     db = SessionLocal()
 
     try:
-        # Create scan record
         scan = Scan(
             folder_path=folder_path,
             files_count=len(files)
@@ -21,7 +15,6 @@ def save_scan(folder_path):
         db.commit()
         db.refresh(scan)
 
-        # Save each file
         for file_data in files:
             file_record = File(
                 scan_id=scan.id,

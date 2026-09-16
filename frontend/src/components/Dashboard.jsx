@@ -258,11 +258,16 @@ export default function Dashboard() {
       const scan =
         await scanFolder(newFolderPath);
 
-      const duplicates =
-        await findDuplicates(newFolderPath);
-
       const history =
         await getScanHistory();
+
+      const duplicates = {
+        duplicate_groups: scan.duplicate_groups || 0,
+        wasted_storage: scan.wasted_storage || 0,
+        wasted_storage_readable:
+          scan.wasted_storage_readable || "0 Bytes",
+        duplicates: scan.duplicates || [],
+      };
 
       setScanData(scan);
       setDuplicateData(duplicates);
@@ -404,8 +409,13 @@ export default function Dashboard() {
         const scan =
           await scanFolder(folderPath);
 
-        const duplicates =
-          await findDuplicates(folderPath);
+        const duplicates = {
+          duplicate_groups: scan.duplicate_groups || 0,
+          wasted_storage: scan.wasted_storage || 0,
+          wasted_storage_readable:
+            scan.wasted_storage_readable || "0 Bytes",
+          duplicates: scan.duplicates || [],
+        };
 
         setScanData(scan);
         setDuplicateData(duplicates);
