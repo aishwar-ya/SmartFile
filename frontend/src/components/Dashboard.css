@@ -180,7 +180,7 @@ input {
   display: block;
 
   width: auto;
-  height: 62px;
+  height: 48px;
 
   object-fit: contain;
 }
@@ -3280,11 +3280,14 @@ input {
 
 .sf-duplicate-file-name {
   font-size: 15px;
+  color: #e8edf5;
+  font-weight: 600;
 }
 
 .sf-duplicate-file-path {
   margin-top: 3px;
   font-size: 12px;
+  color: #8fa3bd;
 }
 
 .sf-duplicate-file-size {
