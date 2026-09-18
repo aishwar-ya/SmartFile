@@ -3371,3 +3371,56 @@ input {
     max-width: 100%;
   }
 }
+
+.sf-scanned-folder {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin-top: 18px;
+  padding: 12px 16px;
+  border: 1px solid var(--sf-border-soft);
+  border-radius: 10px;
+  background: var(--sf-card);
+  overflow: hidden;
+}
+
+.sf-scanned-folder-icon {
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  min-height: 24px !important;
+  flex: 0 0 24px;
+}
+
+.sf-scanned-folder > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.sf-scanned-folder-label {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sf-scanned-folder-path {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+@media (max-width: 900px) {
+  .sf-scanned-folder-path {
+    max-width: 100%;
+  }
+}

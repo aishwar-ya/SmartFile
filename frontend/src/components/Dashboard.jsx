@@ -564,12 +564,29 @@ export default function Dashboard() {
           {activePage === "dashboard" && (
             <>
               <div className="sf-page-head">
-                <h1>Storage Overview</h1>
+              <h1>Storage Overview</h1>
 
-                <p>
-                  Dashboard data from your latest scan.
-                </p>
-              </div>
+              <p>
+                Dashboard data from your latest scan.
+              </p>
+
+              {folderPath && (
+                <div className="sf-scanned-folder">
+                  <FolderIcon className="sf-scanned-folder-icon" />
+                  <div>
+                    <span className="sf-scanned-folder-label">
+                      Scanned Folder
+                    </span>
+                    <span
+                      className="sf-scanned-folder-path"
+                      title={folderPath}
+                    >
+                      {folderPath}
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
 
               {error && (
                 <div className="sf-page-error">
