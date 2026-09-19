@@ -2,7 +2,7 @@
 
 # 🗃️ SMARTFIE
 
-### Smart File Duplicate Detection & Storage Optimization System
+### Smart File Duplicate Detection & Storage Management System
 
 *Find. Analyze. Clean. Recover.*
 
